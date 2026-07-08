@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Banking – Harshita Sharma | COPA B</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { inter: ['Inter', 'sans-serif'] },
+                    colors: {
+                        bank: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a5f',
+                            950: '#0f1d35',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; overflow-x: hidden; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        /* Noise texture */
+        .noise-overlay {
+            position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.015;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Glass */
+        .glass-blue {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(59,130,246,0.15);
+        }
+        .glass-dark {
+            background: rgba(15,29,53,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+
+        /* Animations */
+        .reveal-up {
+            opacity: 0; transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+
+        .reveal-left {
+            opacity: 0; transform: translateX(-40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.active { opacity: 1; transform: translateX(0); }
+
+        .reveal-right {
+            opacity: 0; transform: translateX(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-right.active { opacity: 1; transform: translateX(0); }
+
+        .reveal-scale {
+            opacity: 0; transform: scale(0.9);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-scale.active { opacity: 1; transform: scale(1); }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* Hero gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f1d35 0%, #1e40af 40%, #3b82f6 70%, #60a5fa 100%);
+        }
+        .hero-gradient::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.3) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 80%, rgba(96,165,250,0.2) 0%, transparent 50%);
+        }
+
+        /* Floating animation */
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+        .float { animation: float 4s ease-in-out infinite; }
+        .float-delay { animation: float 4s ease-in-out 1s infinite; }
+        .float-slow { animation: float 6s ease-in-out 0.5s infinite; }
+
+        /* Pulse glow */
+        @keyframes pulse-glow {
+            0%,100% { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+            50% { box-shadow: 0 0 40px rgba(59,130,246,0.6); }
+        }
+        .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+        /* Grid pattern */
+        .grid-pattern {
+            background-image: linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Card hover */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -12px rgba(59,130,246,0.2);
+        }
+
+        /* Icon container */
+        .icon-box {
+            transition: all 0.4s ease;
+        }
+        .card-hover:hover .icon-box {
+            transform: scale(1.1) rotate(-5deg);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        .card-hover:hover .icon-box svg { color: white !important; }
+
+        /* Progress bar */
+        .progress-line {
+            position: fixed; top: 0; left: 0; height: 3px; z-index: 100;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+            transition: width 0.1s linear;
+        }
+
+        /* Nav link underline */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: #3b82f6; transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active-link::after { width: 100%; }
+
+        /* Section number */
+        .section-num {
+            font-size: 8rem; font-weight: 800; line-height: 1;
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.03));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            position: absolute; top: -2rem; right: 1rem; z-index: 0;
+            pointer-events: none; user-select: none;
+        }
+
+        /* Toast */
+        .toast {
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Mobile menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mobile-menu.open { transform: translateX(0); }
+
+        /* Particle dots */
+        .particle {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            background: rgba(96,165,250,0.3);
+        }
+
+        /* Timeline */
+        .timeline-line {
+            position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, transparent, #3b82f6, transparent);
+            transform: translateX(-50%);
+        }
+        @media (max-width: 768px) {
+            .timeline-line { left: 20px; }
+            .section-num { font-size: 5rem; }
+        }
+
+        /* Button shine */
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-shine:hover::before { left: 100%; }
+
+        /* Typing cursor */
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        .cursor { animation: blink 1s infinite; }
+    </style>
+</head>
+<body class="font-inter">
+
+<!-- Noise Overlay -->
+<div class="noise-overlay"></div>
+
+<!-- Progress Bar -->
+<div class="progress-line" id="progressBar"></div>
+
+<!-- Navigation -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-40 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-4 md:px-6">
+        <div class="flex items-center justify-between h-16 md:h-20">
+            <!-- Logo -->
+            <a href="#hero" class="flex items-center gap-2 group">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-shadow">
+                    <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-bold text-sm md:text-base text-white nav-logo-text">AI in Banking</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-1">
+                <a href="#intro" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Intro</a>
+                <a href="#importance" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Importance</a>
+                <a href="#applications" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Applications</a>
+                <a href="#benefits" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Benefits</a>
+                <a href="#challenges" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Challenges</a>
+                <a href="#examples" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Examples</a>
+                <a href="#future" class="nav-link text-xs font-medium tracking-wide text-white/70 hover:text-white px-3 py-2 transition-colors">Future</a>
+                <a href="#contact" class="ml-3 text-xs font-bold tracking-widest uppercase bg-white/10 hover:bg-white/20 text-white px-5 py-2.5 rounded-full border border-white/20 transition-all">Contact</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="menuBtn" class="md:hidden w-10 h-10 flex items-center justify-center text-white" aria-label="Menu">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="mobile-menu fixed inset-0 z-50 bg-bank-950/98 backdrop-blur-xl flex flex-col">
+    <div class="flex items-center justify-between px-4 h-16">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                <i data-lucide="brain" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="font-bold text-sm text-white">AI in Banking</span>
+        </div>
+        <button id="closeMenu" class="w-10 h-10 flex items-center justify-center text-white" aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center gap-6">
+        <a href="#intro" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Introduction</a>
+        <a href="#importance" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Importance</a>
+        <a href="#applications" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Applications</a>
+        <a href="#benefits" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Benefits</a>
+        <a href="#challenges" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Challenges</a>
+        <a href="#examples" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Examples</a>
+        <a href="#future" class="mobile-link text-2xl font-light text-white/80 hover:text-white transition-colors">Future</a>
+        <a href="#contact" class="mobile-link mt-4 text-xs font-bold tracking-widest uppercase bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full transition-colors">Contact Me</a>
+    </div>
+</div>
+
+<!-- ==================== HERO SECTION ==================== -->
+<section id="hero" class="hero-gradient relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Particles -->
+    <div class="particle w-2 h-2 top-[20%] left-[15%] float" style="animation-delay:0s"></div>
+    <div class="particle w-1.5 h-1.5 top-[60%] left-[80%] float-delay"></div>
+    <div class="particle w-3 h-3 top-[30%] right-[20%] float-slow"></div>
+    <div class="particle w-1 h-1 top-[75%] left-[25%] float" style="animation-delay:2s"></div>
+    <div class="particle w-2 h-2 top-[15%] right-[35%] float-delay"></div>
+    <div class="particle w-1.5 h-1.5 bottom-[20%] right-[15%] float-slow"></div>
+
+    <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        <!-- Badge -->
+        <div class="reveal-up inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-8">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+            <span class="text-xs font-medium tracking-wider uppercase text-white/80">Project Presentation</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="reveal-up stagger-1 text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.9] tracking-tight mb-6">
+            AI in
+            <span class="block bg-gradient-to-r from-blue-200 via-blue-100 to-white bg-clip-text text-transparent">Banking</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="reveal-up stagger-2 text-base md:text-xl text-blue-200/80 font-light max-w-2xl mx-auto mb-4 leading-relaxed">
+            Exploring how Artificial Intelligence is revolutionizing the banking industry — from fraud detection to personalized financial services.
+        </p>
+
+        <!-- Presenter Info -->
+        <div class="reveal-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 mb-12">
+            <div class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-sm">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm">HS</div>
+                <div class="text-left">
+                    <p class="text-white font-medium text-sm">Harshita Sharma</p>
+                    <p class="text-blue-300/70 text-xs">COPA B</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="reveal-up stagger-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#intro" class="btn-shine group flex items-center gap-2 bg-white text-bank-900 font-semibold text-sm px-8 py-4 rounded-full shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-blue-500/20 transition-all">
+                Explore Presentation
+                <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
+            </a>
+            <a href="#contact" class="flex items-center gap-2 text-white/80 hover:text-white font-medium text-sm px-8 py-4 rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                Get in Touch
+            </a>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 reveal-up stagger-5">
+        <span class="text-[10px] tracking-widest uppercase text-white/40">Scroll</span>
+        <div class="w-5 h-8 rounded-full border-2 border-white/30 flex justify-center pt-1.5">
+            <div class="w-1 h-2 rounded-full bg-white/60 animate-bounce"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== INTRODUCTION ==================== -->
+<section id="intro" class="relative py-24 md:py-32 bg-white grid-pattern">
+    <div class="section-num">01</div>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-600 mb-4">Slide 02</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">What is Artificial Intelligence?</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+            <!-- Left: Image -->
+            <div class="reveal-left">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl shadow-blue-500/10">
+                    <img src="https://picsum.photos/seed/ai-brain-tech/600/500.jpg" alt="AI Technology" class="w-full h-80 md:h-[420px] object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-bank-950/60 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <div class="glass-blue rounded-xl px-4 py-3 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
+                                <i data-lucide="cpu" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-bank-950 font-semibold text-sm">Machine Learning</p>
+                                <p class="text-bank-900/60 text-xs">Deep Learning & Data Analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Content -->
+            <div class="space-y-6">
+                <div class="reveal-right stagger-1 flex gap-4 p-5 rounded-2xl bg-blue-50/80 border border-blue-100 card-hover">
+                    <div class="icon-box w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="sparkles" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-bank-950 mb-1">Human-Like Intelligence</h3>
+                        <p class="text-sm text-bank-900/60 leading-relaxed">AI enables computers to perform tasks that normally require human intelligence — thinking, learning, and problem-solving.</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-2 flex gap-4 p-5 rounded-2xl bg-blue-50/80 border border-blue-100 card-hover">
+                    <div class="icon-box w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="layers" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-bank-950 mb-1">Core Technologies</h3>
+                        <p class="text-sm text-bank-900/60 leading-relaxed">It uses machine learning, deep learning, and data analysis to process information and make intelligent decisions.</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-3 flex gap-4 p-5 rounded-2xl bg-blue-50/80 border border-blue-100 card-hover">
+                    <div class="icon-box w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="landmark" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-bank-950 mb-1">Banking Revolution</h3>
+                        <p class="text-sm text-bank-900/60 leading-relaxed">Banks use AI to improve customer service, enhance security, and boost operational efficiency across all departments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== IMPORTANCE ==================== -->
+<section id="importance" class="relative py-24 md:py-32 bg-gradient-to-b from-slate-50 to-white">
+    <div class="section-num">02</div>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-600 mb-4">Slide 03</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">Importance of AI in Banking</h2>
+            <p class="reveal-up stagger-2 text-bank-900/50 mt-4 max-w-xl mx-auto text-sm md:text-base">Why banks are rapidly adopting AI technologies across their operations</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="reveal-up stagger-1 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="zap" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Faster Services</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Process transactions and requests in seconds instead of hours or days.</p>
+            </div>
+            <div class="reveal-up stagger-2 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="heart" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Better Customer Experience</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Personalized interactions that make customers feel valued and understood.</p>
+            </div>
+            <div class="reveal-up stagger-3 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="shield-check" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Fraud Detection</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Real-time monitoring to identify and prevent suspicious activities instantly.</p>
+            </div>
+            <div class="reveal-up stagger-4 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="trending-down" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Reduced Costs</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Automating repetitive tasks significantly cuts operational expenses.</p>
+            </div>
+            <div class="reveal-up stagger-5 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="target" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Accurate Decisions</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Data-driven insights for precise financial decision-making and risk assessment.</p>
+            </div>
+            <div class="reveal-up stagger-6 card-hover p-6 rounded-2xl bg-white border border-blue-100 shadow-sm">
+                <div class="icon-box w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+                    <i data-lucide="clock" class="w-7 h-7 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">24/7 Support</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Round-the-clock customer assistance through AI-powered chatbots and assistants.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== APPLICATIONS ==================== -->
+<section id="applications" class="relative py-24 md:py-32 bg-bank-950 overflow-hidden">
+    <!-- Background decoration -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-0 right-0 w-80 h-80 bg-blue-400/10 rounded-full blur-[100px]"></div>
+
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-400 mb-4">Slide 04</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-white tracking-tight">Applications of AI in Banking</h2>
+        </div>
+
+        <div class="space-y-4">
+            <!-- App 1 -->
+            <div class="reveal-up stagger-1 group flex flex-col md:flex-row items-stretch gap-4 p-5 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 hover:bg-white/8 transition-all duration-500 cursor-default">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bot" class="w-7 h-7 text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-white text-lg mb-1">AI Chatbots for Customer Support</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Virtual assistants like Erica and EVA handle millions of customer queries instantly, providing 24/7 support without human intervention.</p>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-white/20 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"></i>
+                </div>
+            </div>
+            <!-- App 2 -->
+            <div class="reveal-up stagger-2 group flex flex-col md:flex-row items-stretch gap-4 p-5 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 hover:bg-white/8 transition-all duration-500 cursor-default">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20 group-hover:scale-110 transition-transform">
+                    <i data-lucide="credit-card" class="w-7 h-7 text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-white text-lg mb-1">Fraud Detection & Prevention</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">AI algorithms analyze transaction patterns in real-time to detect anomalies and block fraudulent activities before damage occurs.</p>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-white/20 group-hover:text-red-400 group-hover:translate-x-1 transition-all"></i>
+                </div>
+            </div>
+            <!-- App 3 -->
+            <div class="reveal-up stagger-3 group flex flex-col md:flex-row items-stretch gap-4 p-5 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 hover:bg-white/8 transition-all duration-500 cursor-default">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shrink-0 shadow-lg shadow-green-500/20 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bar-chart-3" class="w-7 h-7 text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-white text-lg mb-1">Credit Scoring & Loan Approval</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">AI evaluates creditworthiness using alternative data sources, enabling faster and fairer lending decisions.</p>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-white/20 group-hover:text-green-400 group-hover:translate-x-1 transition-all"></i>
+                </div>
+            </div>
+            <!-- App 4 -->
+            <div class="reveal-up stagger-4 group flex flex-col md:flex-row items-stretch gap-4 p-5 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 hover:bg-white/8 transition-all duration-500 cursor-default">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                    <i data-lucide="lightbulb" class="w-7 h-7 text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-white text-lg mb-1">Personalized Financial Advice</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">AI analyzes spending habits and financial goals to offer tailored advice on budgeting, saving, and investing.</p>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-white/20 group-hover:text-purple-400 group-hover:translate-x-1 transition-all"></i>
+                </div>
+            </div>
+            <!-- App 5 -->
+            <div class="reveal-up stagger-5 group flex flex-col md:flex-row items-stretch gap-4 p-5 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-blue-500/30 hover:bg-white/8 transition-all duration-500 cursor-default">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                    <i data-lucide="trending-up" class="w-7 h-7 text-white"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-white text-lg mb-1">Investment & Wealth Management</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Robo-advisors use AI to create and manage investment portfolios, making wealth management accessible to everyone.</p>
+                </div>
+                <div class="hidden md:flex items-center">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-white/20 group-hover:text-amber-400 group-hover:translate-x-1 transition-all"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== BENEFITS ==================== -->
+<section id="benefits" class="relative py-24 md:py-32 bg-white grid-pattern">
+    <div class="section-num">04</div>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-600 mb-4">Slide 05</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">Benefits of AI</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Left: Visual -->
+            <div class="reveal-left relative">
+                <div class="rounded-3xl overflow-hidden shadow-xl">
+                    <img src="https://picsum.photos/seed/digital-banking-future/600/600.jpg" alt="Digital Banking" class="w-full h-80 md:h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-blue-900/70 via-blue-900/30 to-transparent rounded-3xl"></div>
+                </div>
+                <!-- Floating stat card -->
+                <div class="absolute -bottom-6 -right-4 md:right-8 glass-blue rounded-2xl p-5 shadow-xl float">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i>
+                        <span class="text-xs font-medium text-green-600">+80%</span>
+                    </div>
+                    <p class="text-bank-950 font-bold text-2xl">$4.4B</p>
+                    <p class="text-bank-900/50 text-xs">AI in Banking Market</p>
+                </div>
+            </div>
+
+            <!-- Right: Benefits list -->
+            <div class="flex flex-col justify-center space-y-4">
+                <div class="reveal-right stagger-1 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="rocket" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Faster Transactions</h4>
+                        <p class="text-xs text-bank-900/50">Instant processing of payments and transfers</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-2 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="lock" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Enhanced Security</h4>
+                        <p class="text-xs text-bank-900/50">Advanced threat detection and prevention</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-3 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Reduced Human Errors</h4>
+                        <p class="text-xs text-bank-900/50">Automated processes minimize mistakes</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-4 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="user-check" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Personalized Services</h4>
+                        <p class="text-xs text-bank-900/50">Tailored banking for every customer</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-5 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="piggy-bank" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Cost Savings</h4>
+                        <p class="text-xs text-bank-900/50">Significant reduction in operational costs</p>
+                    </div>
+                </div>
+                <div class="reveal-right stagger-6 flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50/80 transition-colors group cursor-default">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="smile" class="w-5 h-5 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-bank-950 text-sm">Customer Satisfaction</h4>
+                        <p class="text-xs text-bank-900/50">Happier customers through better service</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CHALLENGES ==================== -->
+<section id="challenges" class="relative py-24 md:py-32 bg-gradient-to-b from-slate-50 to-white">
+    <div class="section-num">05</div>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-red-500 mb-4">Slide 06</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">Challenges of AI</h2>
+            <p class="reveal-up stagger-2 text-bank-900/50 mt-4 max-w-xl mx-auto text-sm">Despite its benefits, AI adoption in banking faces significant hurdles</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="reveal-up stagger-1 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="eye-off" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Data Privacy Concerns</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Handling sensitive financial data raises serious privacy and ethical questions.</p>
+            </div>
+            <div class="reveal-up stagger-2 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Cybersecurity Risks</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">AI systems can be targeted by sophisticated cyber attacks and adversarial manipulation.</p>
+            </div>
+            <div class="reveal-up stagger-3 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="coins" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">High Implementation Costs</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Deploying AI infrastructure requires significant investment in technology and talent.</p>
+            </div>
+            <div class="reveal-up stagger-4 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="scale" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Bias in AI Algorithms</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">AI models can perpetuate biases present in training data, leading to unfair outcomes.</p>
+            </div>
+            <div class="reveal-up stagger-5 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="users" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Need for Skilled Professionals</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">There's a shortage of AI talent with both technical and banking domain expertise.</p>
+            </div>
+            <div class="reveal-up stagger-6 card-hover p-6 rounded-2xl bg-white border border-red-100 shadow-sm group">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-4 group-hover:bg-red-500 transition-colors">
+                    <i data-lucide="file-text" class="w-6 h-6 text-red-500 group-hover:text-white transition-colors"></i>
+                </div>
+                <h3 class="font-semibold text-bank-950 mb-2">Regulatory Compliance</h3>
+                <p class="text-sm text-bank-900/50 leading-relaxed">Navigating complex banking regulations while implementing AI is extremely challenging.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== REAL-LIFE EXAMPLES ==================== -->
+<section id="examples" class="relative py-24 md:py-32 bg-white">
+    <div class="section-num">06</div>
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-600 mb-4">Slide 07</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">Real-Life Examples</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- JPMorgan -->
+            <div class="reveal-up stagger-1 card-hover rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-6 text-center group">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="file-search" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-bold text-white text-sm mb-2">JPMorgan Chase</h3>
+                <p class="text-xs text-blue-200/70 leading-relaxed">AI for document analysis, processing 12,000+ documents annually</p>
+            </div>
+            <!-- BoA -->
+            <div class="reveal-up stagger-2 card-hover rounded-2xl bg-gradient-to-br from-red-600 to-red-800 p-6 text-center group">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="message-circle" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-bold text-white text-sm mb-2">Bank of America</h3>
+                <p class="text-xs text-red-200/70 leading-relaxed">Erica virtual assistant serving 37M+ users</p>
+            </div>
+            <!-- HDFC -->
+            <div class="reveal-up stagger-3 card-hover rounded-2xl bg-gradient-to-br from-blue-800 to-indigo-900 p-6 text-center group">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bot" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-bold text-white text-sm mb-2">HDFC Bank</h3>
+                <p class="text-xs text-blue-200/70 leading-relaxed">EVA chatbot handling millions of customer queries</p>
+            </div>
+            <!-- ICICI -->
+            <div class="reveal-up stagger-4 card-hover rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 p-6 text-center group">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="headphones" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-bold text-white text-sm mb-2">ICICI Bank</h3>
+                <p class="text-xs text-orange-200/70 leading-relaxed">AI-powered customer support across all channels</p>
+            </div>
+            <!-- SBI -->
+            <div class="reveal-up stagger-5 card-hover rounded-2xl bg-gradient-to-br from-green-600 to-green-800 p-6 text-center group">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="smartphone" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-bold text-white text-sm mb-2">SBI</h3>
+                <p class="text-xs text-green-200/70 leading-relaxed">AI-based digital banking services for 500M+ customers</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FUTURE ==================== -->
+<section id="future" class="relative py-24 md:py-32 bg-bank-950 overflow-hidden">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[150px]"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-16">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-400 mb-4">Slide 08</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-white tracking-tight">Future of AI in Banking</h2>
+            <p class="reveal-up stagger-2 text-white/40 mt-4 max-w-xl mx-auto text-sm">What we can expect in the next decade of AI-powered banking</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="reveal-up stagger-1 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="mic" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">Voice-Enabled Banking</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">Conduct transactions and get financial advice using natural voice commands through smart devices.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-2 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full blur-2xl group-hover:bg-green-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-600/20 border border-green-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield-alert" class="w-8 h-8 text-green-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">Smarter Fraud Detection</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">Next-gen AI will predict fraud before it happens using behavioral biometrics and pattern recognition.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-3 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl group-hover:bg-purple-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="brain" class="w-8 h-8 text-purple-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">AI Financial Planning</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">Personal AI financial planners will manage your entire financial life — savings, investments, and taxes.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-4 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 border border-cyan-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="monitor-smartphone" class="w-8 h-8 text-cyan-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">Fully Digital Banking</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">Branchless, fully AI-operated banks with zero physical infrastructure and maximum efficiency.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-5 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="git-branch" class="w-8 h-8 text-amber-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">Better Risk Management</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">AI will provide real-time risk assessment and automated decision-making for complex scenarios.</p>
+                </div>
+            </div>
+            <div class="reveal-up stagger-6 group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/5 rounded-full blur-2xl group-hover:bg-pink-500/10 transition-colors"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 border border-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="badge-check" class="w-8 h-8 text-pink-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-white text-lg mb-3">Instant Loan Approvals</h3>
+                    <p class="text-sm text-white/40 leading-relaxed">Loans approved in seconds with AI analyzing thousands of data points in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCLUSION ==================== -->
+<section id="conclusion" class="relative py-24 md:py-32 bg-white grid-pattern overflow-hidden">
+    <div class="section-num">08</div>
+    <div class="max-w-4xl mx-auto px-4 md:px-6 relative z-10">
+        <div class="text-center mb-12">
+            <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-600 mb-4">Slide 09</span>
+            <h2 class="reveal-up stagger-1 text-3xl md:text-5xl font-bold text-bank-950 tracking-tight">Conclusion</h2>
+        </div>
+
+        <div class="reveal-scale space-y-6">
+            <div class="p-8 rounded-3xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/50 text-center">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mx-auto mb-6 pulse-glow">
+                    <i data-lucide="sparkles" class="w-10 h-10 text-white"></i>
+                </div>
+                <blockquote class="text-xl md:text-2xl font-medium text-bank-950 leading-relaxed mb-6">
+                    "AI is transforming the banking industry — making it faster, safer, and more efficient than ever before."
+                </blockquote>
+                <div class="w-12 h-0.5 bg-blue-300 mx-auto mb-6"></div>
+                <div class="space-y-3 text-left max-w-lg mx-auto">
+                    <div class="flex items-start gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                        <p class="text-sm text-bank-900/70">AI makes banking faster, safer, and more efficient</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                        <p class="text-sm text-bank-900/70">Human expertise remains important alongside AI</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                        <p class="text-sm text-bank-900/70">The future of banking will be increasingly AI-driven</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== THANK YOU / CONTACT ==================== -->
+<section id="contact" class="relative py-24 md:py-32 hero-gradient overflow-hidden">
+    <!-- Floating elements -->
+    <div class="particle w-3 h-3 top-[20%] left-[10%] float" style="background:rgba(255,255,255,0.15)"></div>
+    <div class="particle w-2 h-2 top-[50%] right-[15%] float-delay" style="background:rgba(255,255,255,0.1)"></div>
+    <div class="particle w-4 h-4 bottom-[25%] left-[30%] float-slow" style="background:rgba(255,255,255,0.08)"></div>
+
+    <div class="max-w-4xl mx-auto px-4 md:px-6 relative z-10 text-center">
+        <span class="reveal-up inline-block text-[10px] font-bold tracking-[0.3em] uppercase text-blue-300 mb-4">Slide 10</span>
+
+        <h2 class="reveal-up stagger-1 text-5xl md:text-7xl font-bold text-white tracking-tight mb-6">
+            Thank You!
+        </h2>
+
+        <p class="reveal-up stagger-2 text-lg md:text-xl text-blue-200/70 font-light max-w-xl mx-auto mb-12">
+            Thank you for your attention. I'd love to hear your questions and feedback.
+        </p>
+
+        <!-- Contact Card -->
+        <div class="reveal-up stagger-3 max-w-md mx-auto">
+            <div class="glass-dark rounded-3xl p-8 text-center">
+                <!-- Avatar -->
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mx-auto mb-5 ring-4 ring-white/10">
+                    <span class="text-2xl font-bold text-white">HS</span>
+                </div>
+
+                <h3 class="text-white font-semibold text-lg mb-1">Harshita Sharma</h3>
+                <p class="text-blue-300/60 text-sm mb-6">COPA B • AI in Banking Project</p>
+
+                <!-- Email -->
+                <a href="mailto:harshita.sharma@example.com" class="group flex items-center justify-center gap-3 w-full bg-white/10 hover:bg-white/15 border border-white/10 hover:border-white/20 text-white px-6 py-4 rounded-2xl transition-all duration-300 mb-4">
+                    <i data-lucide="mail" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-sm font-medium">harshita.sharma@example.com</span>
+                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-white/40 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all ml-auto"></i>
+                </a>
+
+                <!-- Social Links -->
+                <div class="flex items-center justify-center gap-3 mt-6">
+                    <a href="mailto:harshita.sharma@example.com" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center transition-all hover:scale-110">
+                        <i data-lucide="mail" class="w-5 h-5 text-white/70"></i>
+                    </a>
+                    <a href="#" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center transition-all hover:scale-110">
+                        <i data-lucide="linkedin" class="w-5 h-5 text-white/70"></i>
+                    </a>
+                    <a href="#" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center transition-all hover:scale-110">
+                        <i data-lucide="github" class="w-5 h-5 text-white/70"></i>
+                    </a>
+                    <a href="#" class="w-11 h-11 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center transition-all hover:scale-110">
+                        <i data-lucide="phone" class="w-5 h-5 text-white/70"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Any Questions? -->
+        <div class="reveal-up stagger-4 mt-12">
+            <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10">
+                <i data-lucide="help-circle" class="w-4 h-4 text-blue-400 animate-pulse"></i>
+                <span class="text-sm text-white/60">Any Questions?</span>
+                <span class="cursor text-blue-400 font-bold">|</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="bg-bank-950 border-t border-white/5 py-8">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                <i data-lucide="brain" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-xs text-white/40">AI in Banking • Harshita Sharma • COPA B</span>
+        </div>
+        <p class="text-xs text-white/30">Project Presentation © 2025. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- ==================== TOAST ==================== -->
+<div id="toast" class="toast fixed bottom-6 right-6 z-[60] glass-dark rounded-2xl px-6 py-4 flex items-center gap-3 shadow-2xl max-w-sm">
+    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+        <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+    </div>
+    <div>
+        <p class="text-white text-sm font-medium">Email copied!</p>
+        <p class="text-white/50 text-xs">harshita.sharma@example.com</p>
+    </div>
+</div>
+
+<!-- ==================== BACK TO TOP ==================== -->
+<button id="backToTop" class="fixed bottom-6 left-6 z-40 w-12 h-12 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/30 flex items-center justify-center opacity-0 translate-y-4 pointer-events-none transition-all duration-300 hover:bg-blue-700 hover:scale-110" aria-label="Back to top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+</button>
+
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // ============ Scroll Progress Bar ============
+    const progressBar = document.getElementById('progressBar');
+    function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+    }
+
+    // ============ Navbar Background on Scroll ============
+    const navbar = document.getElementById('navbar');
+    function updateNavbar() {
+        if (window.scrollY > 80) {
+            navbar.classList.add('glass-dark', 'shadow-lg');
+            navbar.querySelector('.nav-logo-text').classList.remove('text-white');
+            navbar.querySelector('.nav-logo-text').classList.add('text-white');
+        } else {
+            navbar.classList.remove('glass-dark', 'shadow-lg');
+        }
+    }
+
+    // ============ Back to Top ============
+    const backToTop = document.getElementById('backToTop');
+    function updateBackToTop() {
+        if (window.scrollY > 600) {
+            backToTop.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            backToTop.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        } else {
+            backToTop.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            backToTop.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        }
+    }
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ============ Scroll Event ============
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                updateProgress();
+                updateNavbar();
+                updateBackToTop();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // ============ Intersection Observer for Reveals ============
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+        observer.observe(el);
+    });
+
+    // ============ Mobile Menu ============
+    const menuBtn = document.getElementById('menuBtn');
+    const closeMenuBtn = document.getElementById('closeMenu');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+    closeMenuBtn.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // ============ Active Nav Link ============
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => link.classList.remove('active-link'));
+                const activeLink = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+                if (activeLink) activeLink.classList.add('active-link');
+            }
+        });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+
+    // ============ Email Copy Toast ============
+    const emailLink = document.querySelector('a[href^="mailto"]');
+    const toast = document.getElementById('toast');
+
+    emailLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = 'harshita.sharma@example.com';
+        navigator.clipboard.writeText(email).then(() => {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }).catch(() => {
+            window.location.href = `mailto:${email}`;
+        });
+    });
+
+    // ============ Initial calls ============
+    updateProgress();
+    updateNavbar();
+    updateBackToTop();
+</script>
+</body>
+</html>
